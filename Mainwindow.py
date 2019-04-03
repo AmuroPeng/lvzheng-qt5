@@ -7,6 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import json
 
 
 class Ui_MainWindow(object):
@@ -138,6 +139,11 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+        #################################################################
+        self.ButtonLilun.clicked.connect(lambda: self.transform())
+
+        #################################################################
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
@@ -168,6 +174,21 @@ class Ui_MainWindow(object):
         self.label_15.setText(_translate("MainWindow", "补偿参数："))
         self.ButtonClose.setText(_translate("MainWindow", "关闭"))
 
+    #################################################################
+    def load_data(self):  # 以后万一用得上
+        with open('data.json', 'r') as json_file:
+            load_dict = json.load(json_file)
+            print(load_dict)
+
+    def save_data(self, dic):  # 以后万一用得上
+        json_str = json.dumps(dic, indent=4)
+        print(json_str)
+        with open('data.json', 'w') as json_file:
+            load_dict = json.load(json_file)
+            print(load_dict)
+
+
+#################################################################
 
 if __name__ == "__main__":
     import sys
