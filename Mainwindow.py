@@ -7,8 +7,12 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+###############################################################
+import Functions
 import json
 
+
+###############################################################
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -140,7 +144,7 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
         #################################################################
-        self.ButtonLilun.clicked.connect(lambda: self.transform())
+        self.ButtonLilun.clicked.connect(lambda: self.theoretical_curve())
 
         #################################################################
 
@@ -187,8 +191,20 @@ class Ui_MainWindow(object):
             load_dict = json.load(json_file)
             print(load_dict)
 
+    def theoretical_curve(self):
+        std_z = 40  # 这是啥来的忘了好像用不上
+        std_e = 28.5648595796  # 这是啥来的忘了好像用不上
+        std_rb = 400  # 样板模拟齿轮的基圆半径
+        std_rp = 1.5  # 齿轮测量仪器的测头半径(但是是用户导入的数据，所以暂时用不上)
+        std_m = 21.28355545  # 这是啥来的忘了好像用不上
+        std_c = 401.583156  # 定心轴和测量中心轴的距离
+        std_rc = 105.102  # 检测圆弧半径
+        input_rp = self.textEditCetou.text()  # 齿轮测量仪器的测头半径(用户输入)
+        input_interval = self.textEditCaiyang.text()  # 采样间隔
+        input_rotationAngle = self.textEditXuanzhuan.text()  # 样板的旋转角度ε
+        delta_p = Functions.func1(std_rc, input_rp, std_c, std_rb, input_rotationAngle)
+    #################################################################
 
-#################################################################
 
 if __name__ == "__main__":
     import sys
