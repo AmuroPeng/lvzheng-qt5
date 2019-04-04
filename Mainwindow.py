@@ -8,8 +8,19 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 ###############################################################
+from PyQt5.QtGui import QImage, QPixmap
 import Functions
+import Draw
 import json
+import cv2
+import pyqtgraph as pg
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow,QMessageBox
+from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtWidgets import QMainWindow, QApplication, QGraphicsScene, QGraphicsPixmapItem
+from PyQt5.QtGui import QImage, QPixmap
+import cv2
 
 
 ###############################################################
@@ -179,12 +190,12 @@ class Ui_MainWindow(object):
         self.ButtonClose.setText(_translate("MainWindow", "关闭"))
 
     #################################################################
-    def load_data(self):  # 以后万一用得上
+    def load_data(self, MainWindow):  # 以后万一用得上
         with open('data.json', 'r') as json_file:
             load_dict = json.load(json_file)
             print(load_dict)
 
-    def save_data(self, dic):  # 以后万一用得上
+    def save_data(self, dic, MainWindow):  # 以后万一用得上
         json_str = json.dumps(dic, indent=4)
         print(json_str)
         with open('data.json', 'w') as json_file:
@@ -192,17 +203,62 @@ class Ui_MainWindow(object):
             print(load_dict)
 
     def theoretical_curve(self):
-        std_z = 40  # 这是啥来的忘了好像用不上
+        print(">>>>>>>>>>>>>>>>>>>>theoretical_curve>>>>>>>>>>>>>>>>>>>")
+        # 将所有数据都float化！！！
+        std_z = 40.0  # 这是啥来的忘了好像用不上
         std_e = 28.5648595796  # 这是啥来的忘了好像用不上
-        std_rb = 400  # 样板模拟齿轮的基圆半径
+        std_rb = 400.0  # 样板模拟齿轮的基圆半径
         std_rp = 1.5  # 齿轮测量仪器的测头半径(但是是用户导入的数据，所以暂时用不上)
         std_m = 21.28355545  # 这是啥来的忘了好像用不上
         std_c = 401.583156  # 定心轴和测量中心轴的距离
         std_rc = 105.102  # 检测圆弧半径
-        input_rp = self.textEditCetou.text()  # 齿轮测量仪器的测头半径(用户输入)
-        input_interval = self.textEditCaiyang.text()  # 采样间隔
-        input_rotationAngle = self.textEditXuanzhuan.text()  # 样板的旋转角度ε
-        delta_p = Functions.func1(std_rc, input_rp, std_c, std_rb, input_rotationAngle)
+        if self.textEditCetou.toPlainText() == ''or not self.textEditCetou.toPlainText().isdigit():
+            QtWidgets.QMessageBox.about(QtWidgets.QMessageBox(), '错误', '请输入正确的测头半径')
+            return 0
+        else:
+            input_rp = float(self.textEditCetou.toPlainText())  # 齿轮测量仪器的测头半径(用户输入)
+        if self.textEditCaiyang.toPlainText() == ''or not self.textEditCaiyang.toPlainText().isdigit():
+            QtWidgets.QMessageBox.about(QtWidgets.QMessageBox(), '错误', '请输入正确的采样间隔')
+            return 0
+        else:
+            input_interval = float(self.textEditCaiyang.toPlainText())  # 采样间隔
+        if self.textEditXuanzhuan.toPlainText() == ''or not self.textEditXuanzhuan.toPlainText().isdigit():
+            QtWidgets.QMessageBox.about(QtWidgets.QMessageBox(), '错误', '请输入正确的旋转角度')
+            return 0
+        else:
+            input_rotationAngle = float(self.textEditXuanzhuan.toPlainText())  # 样板的旋转角度ε
+        # input_rp = 1.5
+        # input_rotationAngle = 40.0
+        # input_interval = 0.001
+        X_list = []
+        Y_list = []
+        list_num = int(input_rotationAngle / input_interval)
+        for i in range(list_num):
+            current_rotationAngle = input_rotationAngle * (i + 1) / list_num
+            # print((i + 1))
+            # print(current_rotationAngle)
+            X_list.append(current_rotationAngle)
+            Y_result = Functions.func1(std_rc, input_rp, std_c, std_rb, current_rotationAngle)
+            Y_list.append(Y_result)
+        print(X_list)
+        print(Y_list)
+        Draw.one_line(X_list, Y_list)  # 绘制图片
+        # 加载图片
+        img = cv2.imread("line.jpg")  # 读取图像
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # 转换图像通道
+        x = img.shape[1]  # 获取图像大小
+        y = img.shape[0]
+        # self.zoomscale = 1  # 图片放缩尺度
+        frame = QImage(img, x, y, QImage.Format_RGB888)
+        pix = QPixmap.fromImage(frame)
+        self.item = QGraphicsPixmapItem(pix)  # 创建像素图元
+        # self.item.setScale(self.zoomscale)
+        self.scene = QGraphicsScene()  # 创建场景
+        self.scene.addItem(self.item)
+        self.graphicsView.setScene(self.scene)  # 将场景添加至视图
+
+        print("<<<<<<<<<<<<<<<theoretical_curve<<<<<<<<<<<<<<<<<<<<")
+
     #################################################################
 
 
