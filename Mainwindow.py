@@ -12,11 +12,12 @@ from PyQt5.QtGui import QImage, QPixmap
 import Functions
 import Draw
 import json
+import IO
 import cv2
 import pyqtgraph as pg
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtWidgets import QApplication, QMainWindow,QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QMainWindow, QApplication, QGraphicsScene, QGraphicsPixmapItem
 from PyQt5.QtGui import QImage, QPixmap
@@ -287,17 +288,6 @@ class Ui_MainWindow(object):
         self.ButtonClose.setText(_translate("MainWindow", "关闭"))
 
     #################################################################
-    def load_data(self, MainWindow):  # 以后万一用得上
-        with open('data.json', 'r') as json_file:
-            load_dict = json.load(json_file)
-            print(load_dict)
-
-    def save_data(self, dic, MainWindow):  # 以后万一用得上
-        json_str = json.dumps(dic, indent=4)
-        print(json_str)
-        with open('data.json', 'w') as json_file:
-            load_dict = json.load(json_file)
-            print(load_dict)
 
     def theoretical_curve(self):
         print(">>>>>>>>>>>>>>>>>>>>theoretical_curve>>>>>>>>>>>>>>>>>>>")
@@ -309,7 +299,6 @@ class Ui_MainWindow(object):
         std_m = 21.28355545  # 这是啥来的忘了好像用不上
         std_c = 401.583156  # 定心轴和测量中心轴的距离
         std_rc = 105.102  # 检测圆弧半径
-        input_rp = self.textEditCetou.value()  # 齿轮测量仪器的测头半径(用户输入)
         # if (str(input_rp).split(".")[0]).isdigit() or str(input_rp).isdigit() or (str(input_rp).split('-')[-1]).split(".")[
         #     -1].isdigit():
         #     pass
@@ -317,22 +306,11 @@ class Ui_MainWindow(object):
         #     QtWidgets.QMessageBox.about(QtWidgets.QMessageBox(), '错误', '请输入正确的测头半径')
         #     return 0
         input_interval = float(self.textEditCaiyang.value())  # 采样间隔
-        # if (str(input_interval).split(".")[0]).isdigit() or str(input_interval).isdigit() or (str(input_interval).split('-')[-1]).split(".")[
-        #     -1].isdigit():
-        #     pass
-        # else:
-        #     QtWidgets.QMessageBox.about(QtWidgets.QMessageBox(), '错误', '请输入正确的采样间隔')
-        #     return 0
+        if input_interval == 0:
+            input_interval = 0.001  # default
         input_rotationAngle = float(self.textEditXuanzhuan.value())  # 样板的旋转角度ε
-        # if (str(input_rotationAngle).split(".")[0]).isdigit() or str(input_rotationAngle).isdigit() or (str(input_rotationAngle).split('-')[-1]).split(".")[
-        #     -1].isdigit():
-        #     pass
-        # else:
-        #     QtWidgets.QMessageBox.about(QtWidgets.QMessageBox(), '错误', '请输入正确的旋转角度')
-        #     return 0
-        # input_rp = 1.5
-        # input_rotationAngle = 40.0
-        # input_interval = 0.001
+        if input_rotationAngle == 0:
+            input_rotationAngle = 40.0  # default
         X_list = []
         Y_list = []
         list_num = int(input_rotationAngle / input_interval)
@@ -341,7 +319,7 @@ class Ui_MainWindow(object):
             # print((i + 1))
             # print(current_rotationAngle)
             X_list.append(current_rotationAngle)
-            Y_result = Functions.func1(std_rc, input_rp, std_c, std_rb, current_rotationAngle)
+            Y_result = Functions.func1(std_rc, std_rp, std_c, std_rb, current_rotationAngle)
             Y_list.append(Y_result)
         print(X_list)
         print(Y_list)
@@ -362,7 +340,29 @@ class Ui_MainWindow(object):
 
         print("<<<<<<<<<<<<<<<theoretical_curve<<<<<<<<<<<<<<<<<<<<")
 
-    #################################################################
+    def actual_curve(self):  # 实际曲线
+        input_rp = self.textEditCetou.value()  # 齿轮测量仪器的测头半径(用户输入)
+        input_interval = float(self.textEditCaiyang.value())  # 采样间隔
+        input_rotationAngle = float(self.textEditXuanzhuan.value())  # 样板的旋转角度ε
+        # todo: 用实际导入数据计算
+
+    def DCE(self):  # 评定偏差曲线：DCE = 实际曲线 - 理论曲线
+        theoretical_list = IO.load_cache('theoretical_list')
+        actual_list = IO.load_cache('actual_list')
+        # todo:偏差曲线
+
+    def evaluation(self):
+        DCE_list = IO.load_cache('DCE_list')
+        # todo:所有评定结果的计算
+
+    def save(self):  # 清除所有数据和曲线
+        a = 1  # todo:保存按钮
+
+    def close_window(self):  # 关闭程序
+        a = 1  # todo:关闭程序
+
+
+#################################################################
 
 
 if __name__ == "__main__":
