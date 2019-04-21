@@ -376,7 +376,6 @@ class Ui_MainWindow(object):
         self.DCE_X_list = self.theoretical_X_list
         self.DCE_Y_list = []
         for i in range(len(self.DCE_X_list)):
-            print(i)
             self.DCE_Y_list.append(self.actual_Y_list[i] - self.theoretical_Y_list[i])
         Draw.one_line(self.DCE_X_list, self.DCE_Y_list, title='DCE Image',
                       save_path=r'./检测结果/平定偏差图像.jpg')  # 绘制图片
