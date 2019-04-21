@@ -2,6 +2,25 @@
 import math
 
 
+def culculate_curve(std_rc, input_rp, std_c, std_rb, input_rotationAngle, input_interval):
+    print(">>>>>>>>> Function >>> culculate_curve >>>>>>>>>>")
+    X_list = []
+    Y_list = []
+    list_start = int(-10.0 / input_interval)
+    list_end = int(input_rotationAngle / input_interval)
+    # print(list_end)
+    for i in range(list_start, list_end + 1):
+        # print(i)
+        current_rotationAngle = input_rotationAngle * i / list_end
+        # print(current_rotationAngle)
+        X_list.append(current_rotationAngle)
+        # print(X_list)
+        Y_result = func1(std_rc, input_rp, std_c, std_rb, current_rotationAngle)
+        Y_list.append(Y_result)
+    return X_list, Y_list
+    print("<<<<<<<<<< Function <<< culculate_curve <<<<<<<<<")
+
+
 def func1(std_rc, input_rp, std_c, std_rb, input_rotationAngle):
     # print("进入Functions.func1")
     temp1 = math.pow(std_rc + input_rp, 2)

@@ -7,7 +7,6 @@ def load_data():
     with open('data.json', 'r') as json_file:
         load_dict = json.load(json_file)
         print(str('###导入data.json数据###\t' + str(load_dict)))
-        # todo: !!! for循环遍历load_dict把数据print在导入数据栏里
     return load_dict
 
 

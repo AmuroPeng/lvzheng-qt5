@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 
 def one_line(x, y):
-    print(">>>>>>>>>>>>>>>>>>>> Draw >>> one_line >>>>>>>>>>>>>>>>>>>")
+    print(">>>>>>>>> Draw >>> one_line >>>>>>>>>>")
     # X轴，Y轴数据
     # x = [0, 1, 2, 3, 4, 5, 6]
     # y = [0.3, 0.4, 2, 5, 3, 4.5, 4]
@@ -15,7 +15,7 @@ def one_line(x, y):
     plt.title("Line plot")  # 图标题
     # plt.show()  # 显示图
     plt.savefig("line.jpg")  # 保存图
-    print("<<<<<<<<<<<<<<<<<<<< Draw <<< one_line <<<<<<<<<<<<<<<<<<<")
+    print("<<<<<<<<< Draw <<< one_line <<<<<<<<<<")
 
 
 if __name__ == "__main__":

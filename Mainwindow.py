@@ -250,6 +250,8 @@ class Ui_MainWindow(object):
 
         #################################################################
         self.ButtonLilun.clicked.connect(lambda: self.theoretical_curve())
+        self.ButtonDaoru.clicked.connect(lambda: self.load_data())
+        self.ButtonShiji.clicked.connect(lambda: self.actual_curve())
 
         #################################################################
 
@@ -290,7 +292,7 @@ class Ui_MainWindow(object):
     #################################################################
 
     def theoretical_curve(self):
-        print(">>>>>>>>>>>>>>>>>>>>theoretical_curve>>>>>>>>>>>>>>>>>>>")
+        print(">>>>>>>>>>>>>>>>>>>>theoretical_curve>>>>>>>>>>>>>>>>>>>>>>>>>")
         # 将所有数据都float化！！！
         std_z = 40.0  # 这是啥来的忘了好像用不上
         std_e = 28.5648595796  # 这是啥来的忘了好像用不上
@@ -305,7 +307,7 @@ class Ui_MainWindow(object):
         # else:
         #     QtWidgets.QMessageBox.about(QtWidgets.QMessageBox(), '错误', '请输入正确的测头半径')
         #     return 0
-        input_rp = float(self.textEditCetou.value())  # 齿轮测量仪器的测头半径
+        input_rp = float(self.textEditCetou.value())  # 齿轮测量仪器的测头半径(用户输入)
         if input_rp == 0.0:
             input_rp = 1.5  # default
         input_interval = float(self.textEditCaiyang.value())  # 采样间隔
@@ -314,40 +316,37 @@ class Ui_MainWindow(object):
         input_rotationAngle = float(self.textEditXuanzhuan.value())  # 样板的旋转角度ε
         if input_rotationAngle == 0.0:
             input_rotationAngle = 28.0  # default
-        X_list = []
-        Y_list = []
-        list_num = int(input_rotationAngle / input_interval)
-        print(list_num)
-        for i in range(-10, list_num+1):
-            print(i)
-            current_rotationAngle = input_rotationAngle * (i + 1) / list_num
-            X_list.append(current_rotationAngle)
-            Y_result = Functions.func1(std_rc, input_rp, std_c, std_rb, current_rotationAngle)
-            Y_list.append(Y_result)
-        print(X_list)
-        print(Y_list)
+        X_list, Y_list = Functions.culculate_curve(std_rc, input_rp, std_c, std_rb, input_rotationAngle, input_interval)
         Draw.one_line(X_list, Y_list)  # 绘制图片
-        # 加载图片
-        img = cv2.imread("line.jpg")  # 读取图像
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # 转换图像通道
-        x = img.shape[1]  # 获取图像大小
-        y = img.shape[0]
-        # self.zoomscale = 1  # 图片放缩尺度
-        frame = QImage(img, x, y, QImage.Format_RGB888)
-        pix = QPixmap.fromImage(frame)
-        self.item = QGraphicsPixmapItem(pix)  # 创建像素图元
-        # self.item.setScale(self.zoomscale)
-        self.scene = QGraphicsScene()  # 创建场景
-        self.scene.addItem(self.item)
-        self.graphicsView.setScene(self.scene)  # 将场景添加至视图
+        self.show_pic()  # 加载图片
 
-        print("<<<<<<<<<<<<<<<theoretical_curve<<<<<<<<<<<<<<<<<<<<")
+        print("<<<<<<<<<<<<<<<<<<<<theoretical_curve<<<<<<<<<<<<<<<<<<<<<<<<<")
+
+    def load_data(self):
+        print(">>>>>>>>>>>>>>>>>>>>load_data>>>>>>>>>>>>>>>>>>>>>>>>>")
+        self.data_dict = IO.load_data()
+        data_str = ''
+        for key, value in self.data_dict.items():
+            data_str = data_str + str(key) + ':' + str(value) + '\n'
+        self.textEditCeliangshuju.setText(data_str)
+        print("<<<<<<<<<<<<<<<<<<<<load_data<<<<<<<<<<<<<<<<<<<<<<<<<")
 
     def actual_curve(self):  # 实际曲线
-        input_rp = self.textEditCetou.value()  # 齿轮测量仪器的测头半径(用户输入)
+        print(">>>>>>>>>>>>>>>>>>>>actual_curve>>>>>>>>>>>>>>>>>>>>>>>>>")
+        input_rp = float(self.textEditCetou.value())  # 齿轮测量仪器的测头半径(用户输入)
+        if input_rp == 0.0:
+            input_rp = 1.5  # default
         input_interval = float(self.textEditCaiyang.value())  # 采样间隔
+        if input_interval == 0.0:
+            input_interval = 0.001  # default
         input_rotationAngle = float(self.textEditXuanzhuan.value())  # 样板的旋转角度ε
-        # todo: 用实际导入数据计算
+        if input_rotationAngle == 0.0:
+            input_rotationAngle = 28.0  # default
+        X_list, Y_list = Functions.culculate_curve(self.data_dict['rc'], input_interval, self.data_dict['C'],
+                                                   self.data_dict['rb'], input_rotationAngle)
+        Draw.one_line(X_list, Y_list)  # 绘制图片
+        self.show_pic()  # 加载图片
+        print("<<<<<<<<<<<<<<<<<<<<actual_curve<<<<<<<<<<<<<<<<<<<<<<<<<")
 
     def DCE(self):  # 评定偏差曲线：DCE = 实际曲线 - 理论曲线
         theoretical_list = IO.load_cache('theoretical_list')
@@ -363,6 +362,20 @@ class Ui_MainWindow(object):
 
     def close_window(self):  # 关闭程序
         a = 1  # todo:关闭程序
+
+    def show_pic(self):
+        img = cv2.imread("line.jpg")  # 读取图像
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # 转换图像通道
+        x = img.shape[1]  # 获取图像大小
+        y = img.shape[0]
+        # self.zoomscale = 1  # 图片放缩尺度
+        frame = QImage(img, x, y, QImage.Format_RGB888)
+        pix = QPixmap.fromImage(frame)
+        self.item = QGraphicsPixmapItem(pix)  # 创建像素图元
+        # self.item.setScale(self.zoomscale)
+        self.scene = QGraphicsScene()  # 创建场景
+        self.scene.addItem(self.item)
+        self.graphicsView.setScene(self.scene)  # 将场景添加至视图
 
 
 #################################################################
