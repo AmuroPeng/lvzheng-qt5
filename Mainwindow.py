@@ -11,6 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QImage, QPixmap
 import Functions
 import Draw
+import math
 import json
 import IO
 import cv2
@@ -34,10 +35,10 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.graphicsView = QtWidgets.QGraphicsView(self.centralwidget)
-        self.graphicsView.setGeometry(QtCore.QRect(220, 90, 541, 511))
+        self.graphicsView.setGeometry(QtCore.QRect(220, 90, 671, 511))
         self.graphicsView.setObjectName("graphicsView")
         self.groupBox = QtWidgets.QGroupBox(self.centralwidget)
-        self.groupBox.setGeometry(QtCore.QRect(10, 50, 170, 110))
+        self.groupBox.setGeometry(QtCore.QRect(10, 50, 201, 110))
         self.groupBox.setObjectName("groupBox")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.groupBox)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -47,6 +48,7 @@ class Ui_MainWindow(object):
         self.label_2.setObjectName("label_2")
         self.horizontalLayout.addWidget(self.label_2)
         self.textEditCetou = QtWidgets.QDoubleSpinBox(self.groupBox)
+        self.textEditCetou.setSuffix("")
         self.textEditCetou.setDecimals(3)
         self.textEditCetou.setObjectName("textEditCetou")
         self.horizontalLayout.addWidget(self.textEditCetou)
@@ -57,6 +59,7 @@ class Ui_MainWindow(object):
         self.label_3.setObjectName("label_3")
         self.horizontalLayout_2.addWidget(self.label_3)
         self.textEditCaiyang = QtWidgets.QDoubleSpinBox(self.groupBox)
+        self.textEditCaiyang.setSuffix("")
         self.textEditCaiyang.setDecimals(3)
         self.textEditCaiyang.setObjectName("textEditCaiyang")
         self.horizontalLayout_2.addWidget(self.textEditCaiyang)
@@ -67,6 +70,7 @@ class Ui_MainWindow(object):
         self.label_4.setObjectName("label_4")
         self.horizontalLayout_3.addWidget(self.label_4)
         self.textEditXuanzhuan = QtWidgets.QDoubleSpinBox(self.groupBox)
+        self.textEditXuanzhuan.setSuffix("")
         self.textEditXuanzhuan.setDecimals(3)
         self.textEditXuanzhuan.setObjectName("textEditXuanzhuan")
         self.horizontalLayout_3.addWidget(self.textEditXuanzhuan)
@@ -78,7 +82,7 @@ class Ui_MainWindow(object):
         self.textEditCeliangshuju.setGeometry(QtCore.QRect(10, 20, 161, 161))
         self.textEditCeliangshuju.setObjectName("textEditCeliangshuju")
         self.groupBox_3 = QtWidgets.QGroupBox(self.centralwidget)
-        self.groupBox_3.setGeometry(QtCore.QRect(790, 120, 261, 441))
+        self.groupBox_3.setGeometry(QtCore.QRect(900, 120, 211, 441))
         self.groupBox_3.setObjectName("groupBox_3")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.groupBox_3)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
@@ -93,6 +97,8 @@ class Ui_MainWindow(object):
         self.label_7.setObjectName("label_7")
         self.horizontalLayout_4.addWidget(self.label_7)
         self.textEditWucha = QtWidgets.QDoubleSpinBox(self.groupBox_3)
+        self.textEditWucha.setEnabled(False)
+        self.textEditWucha.setSuffix("")
         self.textEditWucha.setDecimals(3)
         self.textEditWucha.setObjectName("textEditWucha")
         self.horizontalLayout_4.addWidget(self.textEditWucha)
@@ -108,6 +114,8 @@ class Ui_MainWindow(object):
         self.label_8.setObjectName("label_8")
         self.horizontalLayout_5.addWidget(self.label_8)
         self.textEditBiaozhuncha = QtWidgets.QDoubleSpinBox(self.groupBox_3)
+        self.textEditBiaozhuncha.setEnabled(False)
+        self.textEditBiaozhuncha.setSuffix("")
         self.textEditBiaozhuncha.setDecimals(3)
         self.textEditBiaozhuncha.setObjectName("textEditBiaozhuncha")
         self.horizontalLayout_5.addWidget(self.textEditBiaozhuncha)
@@ -123,6 +131,8 @@ class Ui_MainWindow(object):
         self.label_9.setObjectName("label_9")
         self.horizontalLayout_6.addWidget(self.label_9)
         self.textEditJuli = QtWidgets.QDoubleSpinBox(self.groupBox_3)
+        self.textEditJuli.setEnabled(False)
+        self.textEditJuli.setSuffix("")
         self.textEditJuli.setDecimals(3)
         self.textEditJuli.setObjectName("textEditJuli")
         self.horizontalLayout_6.addWidget(self.textEditJuli)
@@ -138,6 +148,9 @@ class Ui_MainWindow(object):
         self.label_10.setObjectName("label_10")
         self.horizontalLayout_7.addWidget(self.label_10)
         self.textEditYalijiao = QtWidgets.QDoubleSpinBox(self.groupBox_3)
+        self.textEditYalijiao.setEnabled(False)
+        self.textEditYalijiao.setSuffix("")
+        self.textEditYalijiao.setDecimals(3)
         self.textEditYalijiao.setObjectName("textEditYalijiao")
         self.horizontalLayout_7.addWidget(self.textEditYalijiao)
         self.verticalLayout_3.addLayout(self.horizontalLayout_7)
@@ -152,6 +165,7 @@ class Ui_MainWindow(object):
         self.label_11.setObjectName("label_11")
         self.horizontalLayout_8.addWidget(self.label_11)
         self.textEditBzengyi = QtWidgets.QDoubleSpinBox(self.groupBox_3)
+        self.textEditBzengyi.setEnabled(False)
         self.textEditBzengyi.setObjectName("textEditBzengyi")
         self.horizontalLayout_8.addWidget(self.textEditBzengyi)
         self.verticalLayout_3.addLayout(self.horizontalLayout_8)
@@ -166,6 +180,7 @@ class Ui_MainWindow(object):
         self.label_12.setObjectName("label_12")
         self.horizontalLayout_9.addWidget(self.label_12)
         self.textEditBzhihou = QtWidgets.QDoubleSpinBox(self.groupBox_3)
+        self.textEditBzhihou.setEnabled(False)
         self.textEditBzhihou.setObjectName("textEditBzhihou")
         self.horizontalLayout_9.addWidget(self.textEditBzhihou)
         self.verticalLayout_3.addLayout(self.horizontalLayout_9)
@@ -180,6 +195,7 @@ class Ui_MainWindow(object):
         self.label_13.setObjectName("label_13")
         self.horizontalLayout_10.addWidget(self.label_13)
         self.textEditGuzengyi = QtWidgets.QDoubleSpinBox(self.groupBox_3)
+        self.textEditGuzengyi.setEnabled(False)
         self.textEditGuzengyi.setObjectName("textEditGuzengyi")
         self.horizontalLayout_10.addWidget(self.textEditGuzengyi)
         self.verticalLayout_3.addLayout(self.horizontalLayout_10)
@@ -194,6 +210,7 @@ class Ui_MainWindow(object):
         self.label_14.setObjectName("label_14")
         self.horizontalLayout_11.addWidget(self.label_14)
         self.textEditGuzhihou = QtWidgets.QDoubleSpinBox(self.groupBox_3)
+        self.textEditGuzhihou.setEnabled(False)
         self.textEditGuzhihou.setObjectName("textEditGuzhihou")
         self.horizontalLayout_11.addWidget(self.textEditGuzhihou)
         self.verticalLayout_3.addLayout(self.horizontalLayout_11)
@@ -207,12 +224,13 @@ class Ui_MainWindow(object):
         self.label_15.setSizePolicy(sizePolicy)
         self.label_15.setObjectName("label_15")
         self.horizontalLayout_12.addWidget(self.label_15)
-        self.textEditBuchang_2 = QtWidgets.QDoubleSpinBox(self.groupBox_3)
-        self.textEditBuchang_2.setObjectName("textEditBuchang_2")
-        self.horizontalLayout_12.addWidget(self.textEditBuchang_2)
+        self.textEditBuchang = QtWidgets.QDoubleSpinBox(self.groupBox_3)
+        self.textEditBuchang.setEnabled(False)
+        self.textEditBuchang.setObjectName("textEditBuchang")
+        self.horizontalLayout_12.addWidget(self.textEditBuchang)
         self.verticalLayout_3.addLayout(self.horizontalLayout_12)
         self.layoutWidget = QtWidgets.QWidget(self.centralwidget)
-        self.layoutWidget.setGeometry(QtCore.QRect(50, 390, 82, 271))
+        self.layoutWidget.setGeometry(QtCore.QRect(50, 390, 82, 281))
         self.layoutWidget.setObjectName("layoutWidget")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
@@ -241,10 +259,8 @@ class Ui_MainWindow(object):
         self.ButtonClose = QtWidgets.QPushButton(self.layoutWidget)
         self.ButtonClose.setObjectName("ButtonClose")
         self.verticalLayout_2.addWidget(self.ButtonClose)
-        # MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
-        # MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -255,29 +271,22 @@ class Ui_MainWindow(object):
         self.ButtonShiji.clicked.connect(lambda: self.actual_curve())
         self.ButtonPiancha.clicked.connect(lambda: self.DCE())
         self.ButtonPinding.clicked.connect(lambda: self.evaluation())
-        self.ButtonQingchu.clicked.connect(lambda :self.clear())
+        self.ButtonQingchu.clicked.connect(lambda: self.clear())
         #################################################################
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.groupBox.setTitle(_translate("MainWindow", "参数设置："))
-        self.label_2.setText(_translate("MainWindow", "测头半径："))
-        self.textEditCetou.setSuffix(_translate("MainWindow", "mm"))
-        self.label_3.setText(_translate("MainWindow", "采样间隔："))
-        self.textEditCaiyang.setSuffix(_translate("MainWindow", "deg"))
-        self.label_4.setText(_translate("MainWindow", "样板旋转角度："))
-        self.textEditXuanzhuan.setSuffix(_translate("MainWindow", "deg"))
+        self.label_2.setText(_translate("MainWindow", "测头半径(mm)："))
+        self.label_3.setText(_translate("MainWindow", "采样间隔(deg)："))
+        self.label_4.setText(_translate("MainWindow", "样板旋转角度(deg)："))
         self.groupBox_2.setTitle(_translate("MainWindow", "测量数据："))
         self.groupBox_3.setTitle(_translate("MainWindow", "评定结果："))
-        self.label_7.setText(_translate("MainWindow", "最大误差值："))
-        self.textEditWucha.setSuffix(_translate("MainWindow", "um"))
-        self.label_8.setText(_translate("MainWindow", "曲线拟合标准差："))
-        self.textEditBiaozhuncha.setSuffix(_translate("MainWindow", "um"))
-        self.label_9.setText(_translate("MainWindow", "V点和B点距离："))
-        self.textEditJuli.setSuffix(_translate("MainWindow", "deg"))
-        self.label_10.setText(_translate("MainWindow", "压力角误差："))
-        self.textEditYalijiao.setSuffix(_translate("MainWindow", "um/deg"))
+        self.label_7.setText(_translate("MainWindow", "最大误差值(um)："))
+        self.label_8.setText(_translate("MainWindow", "曲线拟合标准差(um)："))
+        self.label_9.setText(_translate("MainWindow", "V点和B点距离(um)："))
+        self.label_10.setText(_translate("MainWindow", "压力角误差(um/deg)："))
         self.label_11.setText(_translate("MainWindow", "B点增益误差："))
         self.label_12.setText(_translate("MainWindow", "B点滞后误差："))
         self.label_13.setText(_translate("MainWindow", "谷底增益误差："))
@@ -382,12 +391,27 @@ class Ui_MainWindow(object):
         max_y = max(fk_Y_list)
         max_x = fk_X_list[fk_Y_list.index(max_y)]
         print("Fafk范围内最小值({},{}),最大值({},{})".format(min_x, min_y, max_x, max_y))
-        self.textEditWucha.setValue(max_y - min_y)
+        self.textEditWucha.setValue((max_y - min_y) * 1000)  # 转换单位
         # 曲线拟合标准差
+        deviation = 0.0
+        for i in fk_Y_list:
+            deviation = deviation + math.pow(i, 2)
+        deviation = math.sqrt(deviation) * 1000 / (len(fk_Y_list) - 1)
+        print("曲线拟合标准差 {}".format(deviation))
+        self.textEditBiaozhuncha.setValue(deviation)
+        # V点和B点距离
+        V_index = self.DCE_X_list.index(X_V)
+        B_index = self.DCE_X_list.index(X_B)
+        distance = abs(self.DCE_Y_list[V_index] - self.DCE_Y_list[B_index]) * 1000
+        print('V点和B点距离 {}'.format(distance))
+        self.textEditJuli.setValue(distance)
+        # 压力角误差
+        yalijiao = distance * 1000 / (X_B - X_V)
+        print('压力角误差 {}'.format(yalijiao))
+        self.textEditYalijiao.setValue(yalijiao)
 
     def clear(self):  # 清除所有数据和曲线
         self.textEditCetou.clear()
-
 
     def close_window(self):  # 关闭程序
         a = 1  # todo:关闭程序
