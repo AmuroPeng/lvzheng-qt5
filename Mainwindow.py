@@ -22,6 +22,7 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QMainWindow, QApplication, QGraphicsScene, QGraphicsPixmapItem
 from PyQt5.QtGui import QImage, QPixmap
 import cv2
+import numpy as np
 
 
 ###############################################################
@@ -252,6 +253,8 @@ class Ui_MainWindow(object):
         self.ButtonLilun.clicked.connect(lambda: self.theoretical_curve())
         self.ButtonDaoru.clicked.connect(lambda: self.load_data())
         self.ButtonShiji.clicked.connect(lambda: self.actual_curve())
+        self.ButtonPiancha.clicked.connect(lambda: self.DCE())
+        self.ButtonPinding.clicked.connect(lambda: self.evaluation())
 
         #################################################################
 
@@ -292,7 +295,7 @@ class Ui_MainWindow(object):
     #################################################################
 
     def theoretical_curve(self):
-        print(">>>>>>>>>>>>>>>>>>>>theoretical_curve>>>>>>>>>>>>>>>>>>>>>>>>>")
+        print(">>>>>>>>>>>>>>>>>>>> theoretical_curve >>>>>>>>>>>>>>>>>>>>>>>>>")
         # 将所有数据都float化！！！
         std_z = 40.0  # 这是啥来的忘了好像用不上
         std_e = 28.5648595796  # 这是啥来的忘了好像用不上
@@ -316,23 +319,26 @@ class Ui_MainWindow(object):
         input_rotationAngle = float(self.textEditXuanzhuan.value())  # 样板的旋转角度ε
         if input_rotationAngle == 0.0:
             input_rotationAngle = 28.0  # default
-        X_list, Y_list = Functions.culculate_curve(std_rc, input_rp, std_c, std_rb, input_rotationAngle, input_interval)
-        Draw.one_line(X_list, Y_list)  # 绘制图片
-        self.show_pic()  # 加载图片
+        self.theoretical_X_list, self.theoretical_Y_list = Functions.culculate_curve(std_rc, input_rp, std_c, std_rb,
+                                                                                     input_rotationAngle,
+                                                                                     input_interval)
+        Draw.one_line(self.theoretical_X_list, self.theoretical_Y_list, title='Theoretical Image',
+                      save_path=r'./检测结果/理论图像.jpg')  # 绘制图片
+        self.show_pic(save_path=r'./检测结果/理论图像.jpg')  # 加载图片
 
-        print("<<<<<<<<<<<<<<<<<<<<theoretical_curve<<<<<<<<<<<<<<<<<<<<<<<<<")
+        print("<<<<<<<<<<<<<<<<<<<< theoretical_curve <<<<<<<<<<<<<<<<<<<<<<<<<")
 
     def load_data(self):
-        print(">>>>>>>>>>>>>>>>>>>>load_data>>>>>>>>>>>>>>>>>>>>>>>>>")
+        print(">>>>>>>>>>>>>>>>>>>> load_data >>>>>>>>>>>>>>>>>>>>>>>>>")
         self.data_dict = IO.load_data()
         data_str = ''
         for key, value in self.data_dict.items():
             data_str = data_str + str(key) + ':' + str(value) + '\n'
         self.textEditCeliangshuju.setText(data_str)
-        print("<<<<<<<<<<<<<<<<<<<<load_data<<<<<<<<<<<<<<<<<<<<<<<<<")
+        print("<<<<<<<<<<<<<<<<<<<< load_data <<<<<<<<<<<<<<<<<<<<<<<<<")
 
     def actual_curve(self):  # 实际曲线
-        print(">>>>>>>>>>>>>>>>>>>>actual_curve>>>>>>>>>>>>>>>>>>>>>>>>>")
+        print(">>>>>>>>>>>>>>>>>>>> actual_curve >>>>>>>>>>>>>>>>>>>>>>>>>")
         input_rp = float(self.textEditCetou.value())  # 齿轮测量仪器的测头半径(用户输入)
         if input_rp == 0.0:
             input_rp = 1.5  # default
@@ -342,29 +348,53 @@ class Ui_MainWindow(object):
         input_rotationAngle = float(self.textEditXuanzhuan.value())  # 样板的旋转角度ε
         if input_rotationAngle == 0.0:
             input_rotationAngle = 28.0  # default
-        X_list, Y_list = Functions.culculate_curve(self.data_dict['rc'], input_interval, self.data_dict['C'],
-                                                   self.data_dict['rb'], input_rotationAngle)
-        Draw.one_line(X_list, Y_list)  # 绘制图片
-        self.show_pic()  # 加载图片
-        print("<<<<<<<<<<<<<<<<<<<<actual_curve<<<<<<<<<<<<<<<<<<<<<<<<<")
+        print(input_rotationAngle)
+        self.actual_X_list, self.actual_Y_list = Functions.culculate_curve(self.data_dict['rc'], input_rp,
+                                                                           self.data_dict['C'],
+                                                                           self.data_dict['rb'], input_rotationAngle,
+                                                                           input_interval)
+        Draw.one_line(self.actual_X_list, self.actual_Y_list, title='Actual Image',
+                      save_path=r'./检测结果/实际图像.jpg')  # 绘制图片
+        self.show_pic(save_path=r'./检测结果/实际图像.jpg')  # 加载图片
+        print("<<<<<<<<<<<<<<<<<<<< actual_curve <<<<<<<<<<<<<<<<<<<<<<<<<")
 
     def DCE(self):  # 评定偏差曲线：DCE = 实际曲线 - 理论曲线
-        theoretical_list = IO.load_cache('theoretical_list')
-        actual_list = IO.load_cache('actual_list')
-        # todo:偏差曲线
+        print(">>>>>>>>>>>>>>>>>>>> DCE >>>>>>>>>>>>>>>>>>>>>>>>>")
+        self.DCE_X_list = self.theoretical_X_list
+        self.DCE_Y_list = []
+        for i in range(len(self.DCE_X_list)):
+            print(i)
+            self.DCE_Y_list.append(self.actual_Y_list[i] - self.theoretical_Y_list[i])
+        Draw.one_line(self.DCE_X_list, self.DCE_Y_list, title='DCE Image',
+                      save_path=r'./检测结果/平定偏差图像.jpg')  # 绘制图片
+        self.show_pic(save_path=r'./检测结果/平定偏差图像.jpg')  # 加载图片
+        print("<<<<<<<<<<<<<<<<<<<< DCE <<<<<<<<<<<<<<<<<<<<<<<<<")
 
     def evaluation(self):
-        DCE_list = IO.load_cache('DCE_list')
-        # todo:所有评定结果的计算
-
+        # V：理论驼峰曲线谷底的点
+        # B：理论驼峰曲线第二个峰值点
+        Y_B, X_B, Y_V, X_V = Functions.culculate_V_B(self.theoretical_X_list, self.theoretical_Y_list)
+        print("谷底的点({},{}),第二个峰值点({},{})".format(X_V, Y_V, X_B, Y_B))
+        # 最大误差值
+        fk_X_list, fk_Y_list = Functions.culculate_fafk(self.DCE_X_list, self.DCE_Y_list)
+        min_y = min(fk_Y_list)
+        min_x = fk_X_list[fk_Y_list.index(min_y)]
+        max_y = max(fk_Y_list)
+        max_x = fk_X_list[fk_Y_list.index(max_y)]
+        print("Fafk范围内最小值({},{}),最大值({},{})".format(min_x, min_y, max_x, max_y))
+        self.textEditWucha.setValue(max_y - min_y)
+        # 曲线拟合标准差
+        
     def save(self):  # 清除所有数据和曲线
         a = 1  # todo:保存按钮
 
     def close_window(self):  # 关闭程序
         a = 1  # todo:关闭程序
 
-    def show_pic(self):
-        img = cv2.imread("line.jpg")  # 读取图像
+    def show_pic(self, save_path='line.jpg'):
+        print(">>>>>>>>>>>>>>>>>>>> show_pic >>>>>>>>>>>>>>>>>>>>>>>>>")
+        # print(save_path)
+        img = cv2.imdecode(np.fromfile(save_path, dtype=np.uint8), -1)  # 读取图像
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # 转换图像通道
         x = img.shape[1]  # 获取图像大小
         y = img.shape[0]
@@ -376,6 +406,7 @@ class Ui_MainWindow(object):
         self.scene = QGraphicsScene()  # 创建场景
         self.scene.addItem(self.item)
         self.graphicsView.setScene(self.scene)  # 将场景添加至视图
+        print("<<<<<<<<<<<<<<<<<<<< show_pic <<<<<<<<<<<<<<<<<<<<<<<<<")
 
 
 #################################################################

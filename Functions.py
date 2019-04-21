@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 import math
+import csv
+import numpy as np
+import pylab as pl
+import matplotlib.pyplot as plt
+import scipy.signal as signal
 
 
 def culculate_curve(std_rc, input_rp, std_c, std_rb, input_rotationAngle, input_interval):
@@ -21,6 +26,21 @@ def culculate_curve(std_rc, input_rp, std_c, std_rb, input_rotationAngle, input_
     print("<<<<<<<<<< Function <<< culculate_curve <<<<<<<<<")
 
 
+def culculate_V_B(X_list, Y_list):
+    print(">>>>>>>>> Function >>> culculate_curve >>>>>>>>>>")
+    x = np.array(Y_list, dtype=float)  # , dtype = int
+    Y_B = x[signal.argrelextrema(x, np.greater)][1]  # 极大值（纵坐标）
+    X_B_temp = (signal.argrelextrema(x, np.greater))[0][1]  # 极大值所对的横坐标的索引
+    X_B = X_list[X_B_temp]  # 对应的横坐标
+    Y_V = (x[signal.argrelextrema(x, np.less)])[0]  # 极小值（纵坐标）
+    X_V_temp = (signal.argrelextrema(x, np.less))[0][0]  # 极小值所对的横坐标的索引
+    X_V = X_list[X_V_temp]  # 对应的横坐标
+    return Y_B, X_B, Y_V, X_V
+    # for x,y in zip(X_list,Y_list):
+    #     if y>Y_V:
+    print("<<<<<<<<<< Function <<< culculate_curve <<<<<<<<<")
+
+
 def func1(std_rc, input_rp, std_c, std_rb, input_rotationAngle):
     # print("进入Functions.func1")
     temp1 = math.pow(std_rc + input_rp, 2)
@@ -34,6 +54,17 @@ def func1(std_rc, input_rp, std_c, std_rb, input_rotationAngle):
     return result
 
 
+def culculate_fafk(DCE_X_list, DCE_Y_list):  # 计算最大误差值
+    X_FK = 28.0  # default FK：0°~28°
+    fk_X_list = []
+    fk_Y_list = []
+    for x, y in zip(DCE_X_list, DCE_Y_list):
+        if x >= 0.0 and x <= X_FK:
+            fk_X_list.append(x)
+            fk_Y_list.append(y)
+    return fk_X_list, fk_Y_list
+
+
 if __name__ == "__main__":
     std_z = 40.0  # 这是啥来的忘了好像用不上
     std_e = 28.5648595796  # 这是啥来的忘了好像用不上
@@ -45,4 +76,5 @@ if __name__ == "__main__":
     input_rp = 1.5
     input_rotationAngle = 40.0
     input_interval = 0.1
-    print(func1(std_rc, input_rp, std_c, std_rb, 20.0))
+    # print(func1(std_rc, input_rp, std_c, std_rb, 20.0))
+    culculate_V_B([1, 2, 3, 2, 1, 0, 1, 2, 3, 2, 1, 0, 1])
