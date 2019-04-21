@@ -21,7 +21,7 @@ def save_result_to_json(dic):
 def save_result_to_txt(dic):
     with open(r'./检测结果/检测结果.txt', 'w') as f:
         f.write(str(dic))
-        print(str('###导出 检测结果.txt 数据###\t' + str(dic)))
+    print(str('###导出 检测结果.txt 数据###\t' + str(dic)))
 
 
 def load_cache(filename):

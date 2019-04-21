@@ -428,6 +428,7 @@ class Ui_MainWindow(object):
             '压力角误差(um/deg)：': self.textEditYalijiao.value()
         }
         print('保存数据 {}'.format(save_data))
+        IO.save_result_to_txt(save_data)
         print("<<<<<<<<<<<<<<<<<<<< save <<<<<<<<<<<<<<<<<<<<<<<<<")
 
     def clear(self):  # 清除所有数据和曲线
