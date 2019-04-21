@@ -22,6 +22,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QMainWindow, QApplication, QGraphicsScene, QGraphicsPixmapItem
 from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtCore import QCoreApplication
 import cv2
 import numpy as np
 
@@ -273,7 +274,7 @@ class Ui_MainWindow(object):
         self.ButtonPinding.clicked.connect(lambda: self.evaluation())
         self.ButtonQingchu.clicked.connect(lambda: self.clear())
         self.ButtonSave.clicked.connect(lambda: self.save())
-        self.ButtonClose.clicked.connect(lambda: self.close_window())
+        self.ButtonClose.clicked.connect(lambda: QCoreApplication.quit())
 
         #################################################################
 
@@ -441,8 +442,8 @@ class Ui_MainWindow(object):
         self.textEditCeliangshuju.clear()
         print("<<<<<<<<<<<<<<<<<<<< clear <<<<<<<<<<<<<<<<<<<<<<<<<")
 
-    def close_window(self):  # 关闭程序
-        a = 1  # todo:关闭程序
+    # def close_window(self):  # 关闭程序
+    #     self.
 
     def show_pic(self, save_path='line.jpg'):
         print(">>>>>>>>>>>>>>>>>>>> show_pic >>>>>>>>>>>>>>>>>>>>>>>>>")
