@@ -255,7 +255,7 @@ class Ui_MainWindow(object):
         self.ButtonShiji.clicked.connect(lambda: self.actual_curve())
         self.ButtonPiancha.clicked.connect(lambda: self.DCE())
         self.ButtonPinding.clicked.connect(lambda: self.evaluation())
-
+        self.ButtonQingchu.clicked.connect(lambda :self.clear())
         #################################################################
 
     def retranslateUi(self, MainWindow):
@@ -384,9 +384,10 @@ class Ui_MainWindow(object):
         print("Fafk范围内最小值({},{}),最大值({},{})".format(min_x, min_y, max_x, max_y))
         self.textEditWucha.setValue(max_y - min_y)
         # 曲线拟合标准差
-        
-    def save(self):  # 清除所有数据和曲线
-        a = 1  # todo:保存按钮
+
+    def clear(self):  # 清除所有数据和曲线
+        self.textEditCetou.clear()
+
 
     def close_window(self):  # 关闭程序
         a = 1  # todo:关闭程序
