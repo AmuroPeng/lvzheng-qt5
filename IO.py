@@ -10,12 +10,18 @@ def load_data():
     return load_dict
 
 
-def save_result(dic):
+def save_result_to_json(dic):
     json_str = json.dumps(dic)
     print(json_str)
-    with open('/result/data.json', 'w') as json_file:  # todo: 最后一步 改输出，把所有数据+三张图片导出到根目录
+    with open('/result/data.json', 'w') as json_file:
         save_dict = json.load(json_file)
         print(str('###导出data.json数据###\t' + str(save_dict)))
+
+
+def save_result_to_txt(dic):
+    with open(r'./检测结果/检测结果.txt', 'w') as f:
+        f.write(str(dic))
+        print(str('###导出 检测结果.txt 数据###\t' + str(dic)))
 
 
 def load_cache(filename):

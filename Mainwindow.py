@@ -272,6 +272,9 @@ class Ui_MainWindow(object):
         self.ButtonPiancha.clicked.connect(lambda: self.DCE())
         self.ButtonPinding.clicked.connect(lambda: self.evaluation())
         self.ButtonQingchu.clicked.connect(lambda: self.clear())
+        self.ButtonSave.clicked.connect(lambda: self.save())
+        self.ButtonClose.clicked.connect(lambda: self.close_window())
+
         #################################################################
 
     def retranslateUi(self, MainWindow):
@@ -380,6 +383,7 @@ class Ui_MainWindow(object):
         print("<<<<<<<<<<<<<<<<<<<< DCE <<<<<<<<<<<<<<<<<<<<<<<<<")
 
     def evaluation(self):
+        print(">>>>>>>>>>>>>>>>>>>> evaluation >>>>>>>>>>>>>>>>>>>>>>>>>")
         # V：理论驼峰曲线谷底的点
         # B：理论驼峰曲线第二个峰值点
         Y_B, X_B, Y_V, X_V = Functions.culculate_V_B(self.theoretical_X_list, self.theoretical_Y_list)
@@ -409,9 +413,33 @@ class Ui_MainWindow(object):
         yalijiao = distance * 1000 / (X_B - X_V)
         print('压力角误差 {}'.format(yalijiao))
         self.textEditYalijiao.setValue(yalijiao)
+        print("<<<<<<<<<<<<<<<<<<<< evaluation <<<<<<<<<<<<<<<<<<<<<<<<<")
+
+    def save(self):
+        print(">>>>>>>>>>>>>>>>>>>> save >>>>>>>>>>>>>>>>>>>>>>>>>")
+        save_data = {
+            '测头半径(mm)：': self.textEditCetou.value(),
+            '采样间隔(deg)：': self.textEditCaiyang.value(),
+            '样板旋转角度(deg)：': self.textEditXuanzhuan.value(),
+            '最大误差值(um)：': self.textEditWucha.value(),
+            '曲线拟合标准差(um)：': self.textEditBiaozhuncha.value(),
+            'V点和B点距离(um)：': self.textEditJuli.value(),
+            '压力角误差(um/deg)：': self.textEditYalijiao.value()
+        }
+        print('保存数据 {}'.format(save_data))
+        print("<<<<<<<<<<<<<<<<<<<< save <<<<<<<<<<<<<<<<<<<<<<<<<")
 
     def clear(self):  # 清除所有数据和曲线
+        print(">>>>>>>>>>>>>>>>>>>> clear >>>>>>>>>>>>>>>>>>>>>>>>>")
         self.textEditCetou.clear()
+        self.textEditCaiyang.clear()
+        self.textEditXuanzhuan.clear()
+        self.textEditWucha.clear()
+        self.textEditBiaozhuncha.clear()
+        self.textEditJuli.clear()
+        self.textEditYalijiao.clear()
+        self.textEditCeliangshuju.clear()
+        print("<<<<<<<<<<<<<<<<<<<< clear <<<<<<<<<<<<<<<<<<<<<<<<<")
 
     def close_window(self):  # 关闭程序
         a = 1  # todo:关闭程序
