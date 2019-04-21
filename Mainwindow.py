@@ -305,21 +305,24 @@ class Ui_MainWindow(object):
         # else:
         #     QtWidgets.QMessageBox.about(QtWidgets.QMessageBox(), '错误', '请输入正确的测头半径')
         #     return 0
+        input_rp = float(self.textEditCetou.value())  # 齿轮测量仪器的测头半径
+        if input_rp == 0.0:
+            input_rp = 1.5  # default
         input_interval = float(self.textEditCaiyang.value())  # 采样间隔
-        if input_interval == 0:
+        if input_interval == 0.0:
             input_interval = 0.001  # default
         input_rotationAngle = float(self.textEditXuanzhuan.value())  # 样板的旋转角度ε
-        if input_rotationAngle == 0:
-            input_rotationAngle = 40.0  # default
+        if input_rotationAngle == 0.0:
+            input_rotationAngle = 28.0  # default
         X_list = []
         Y_list = []
         list_num = int(input_rotationAngle / input_interval)
-        for i in range(list_num):
+        print(list_num)
+        for i in range(-10, list_num+1):
+            print(i)
             current_rotationAngle = input_rotationAngle * (i + 1) / list_num
-            # print((i + 1))
-            # print(current_rotationAngle)
             X_list.append(current_rotationAngle)
-            Y_result = Functions.func1(std_rc, std_rp, std_c, std_rb, current_rotationAngle)
+            Y_result = Functions.func1(std_rc, input_rp, std_c, std_rb, current_rotationAngle)
             Y_list.append(Y_result)
         print(X_list)
         print(Y_list)
