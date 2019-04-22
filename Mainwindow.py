@@ -468,6 +468,7 @@ class Ui_MainWindow(object):
 if __name__ == "__main__":
     import sys
 
+    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
     app = QtWidgets.QApplication(sys.argv)
     widget = QtWidgets.QWidget()
     ui = Ui_MainWindow()
