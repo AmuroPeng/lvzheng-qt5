@@ -440,10 +440,9 @@ class Ui_MainWindow(object):
         self.textEditJuli.clear()
         self.textEditYalijiao.clear()
         self.textEditCeliangshuju.clear()
+        self.scene.clear()
+        self.graphicsView.setScene(self.scene)
         print("<<<<<<<<<<<<<<<<<<<< clear <<<<<<<<<<<<<<<<<<<<<<<<<")
-
-    # def close_window(self):  # 关闭程序
-    #     self.
 
     def show_pic(self, save_path='line.jpg'):
         print(">>>>>>>>>>>>>>>>>>>> show_pic >>>>>>>>>>>>>>>>>>>>>>>>>")
