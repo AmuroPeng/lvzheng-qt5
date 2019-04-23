@@ -6,7 +6,7 @@ import pylab as pl
 import matplotlib.pyplot as plt
 import scipy.signal as signal
 
-
+# 老需求：导入参数计算
 def culculate_curve(std_rc, input_rp, std_c, std_rb, input_rotationAngle, input_interval):
     print(">>>>>>>>> Function >>> culculate_curve >>>>>>>>>>")
     X_list = []
@@ -25,6 +25,16 @@ def culculate_curve(std_rc, input_rp, std_c, std_rb, input_rotationAngle, input_
     return X_list, Y_list
     print("<<<<<<<<<< Function <<< culculate_curve <<<<<<<<<")
 
+# 新需求：直接导入点坐标
+def culculate_curve_via_X(std_rc, input_rp, std_c, std_rb, input_rotationAngle, X_list):
+    print(">>>>>>>>> Function >>> culculate_curve >>>>>>>>>>")
+    Y_list = []
+    # print(list_end)
+    for i in X_list:
+        Y_result = func1(std_rc, input_rp, std_c, std_rb, i)
+        Y_list.append(Y_result)
+    return X_list, Y_list
+    print("<<<<<<<<<< Function <<< culculate_curve <<<<<<<<<")
 
 def culculate_V_B(X_list, Y_list):
     print(">>>>>>>>> Function >>> culculate_curve >>>>>>>>>>")
