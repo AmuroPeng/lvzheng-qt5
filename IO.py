@@ -10,6 +10,19 @@ def load_data():
     return load_dict
 
 
+# def load_txt(load_path='data.txt'):
+#     x_list = []
+#     y_list = []
+#     with open(load_path, 'r') as f:
+#         for line in f.readlines():
+#             line = str(line.strip())  # 把末尾的'\n'删掉
+#             x_list.append(line.split(',')[0])
+#             y_list.append(line.split(',')[1])
+#         print(str('###导入data.txt数据###\t' + str(x_list)))
+#         print(str('###导入data.txt数据###\t' + str(y_list)))
+#     return x_list, y_list
+
+
 def save_result_to_json(dic):
     json_str = json.dumps(dic)
     print(json_str)

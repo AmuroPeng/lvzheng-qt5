@@ -343,29 +343,50 @@ class Ui_MainWindow(object):
 
     def load_data(self):
         print(">>>>>>>>>>>>>>>>>>>> load_data >>>>>>>>>>>>>>>>>>>>>>>>>")
-        self.data_dict = IO.load_data()
-        data_str = ''
-        for key, value in self.data_dict.items():
-            data_str = data_str + str(key) + ':' + str(value) + '\n'
-        self.textEditCeliangshuju.setText(data_str)
+        # 老需求：导入参数计算
+        # self.data_dict = IO.load_data()
+        # data_str = ''
+        # for key, value in self.data_dict.items():
+        #     data_str = data_str + str(key) + ':' + str(value) + '\n'
+        # self.textEditCeliangshuju.setText(data_str)
+        # 新需求：直接导入点坐标
+        self.actual_X_list = []
+        self.actual_Y_list = []
+        with open('data.txt', 'r') as f:
+            self.textEditCeliangshuju.setText(f.read())
+        with open('data.txt', 'r') as f:
+            for line in f.readlines():
+                line = str(line.strip())  # 把末尾的'\n'删掉
+                print(line)
+                self.actual_X_list.append(line.split(',')[0])
+                self.actual_Y_list.append(line.split(',')[1])
+            print(str('###导入data.txt数据###\t' + str(self.actual_X_list)))
+            print(str('###导入data.txt数据###\t' + str(self.actual_Y_list)))
         print("<<<<<<<<<<<<<<<<<<<< load_data <<<<<<<<<<<<<<<<<<<<<<<<<")
 
     def actual_curve(self):  # 实际曲线
         print(">>>>>>>>>>>>>>>>>>>> actual_curve >>>>>>>>>>>>>>>>>>>>>>>>>")
-        input_rp = float(self.textEditCetou.value())  # 齿轮测量仪器的测头半径(用户输入)
-        if input_rp == 0.0:
-            input_rp = 1.5  # default
-        input_interval = float(self.textEditCaiyang.value())  # 采样间隔
-        if input_interval == 0.0:
-            input_interval = 0.001  # default
-        input_rotationAngle = float(self.textEditXuanzhuan.value())  # 样板的旋转角度ε
-        if input_rotationAngle == 0.0:
-            input_rotationAngle = 28.0  # default
-        print(input_rotationAngle)
-        self.actual_X_list, self.actual_Y_list = Functions.culculate_curve(self.data_dict['rc'], input_rp,
-                                                                           self.data_dict['C'],
-                                                                           self.data_dict['rb'], input_rotationAngle,
-                                                                           input_interval)
+        # 老需求：导入参数计算
+        # input_rp = float(self.textEditCetou.value())  # 齿轮测量仪器的测头半径(用户输入)
+        # if input_rp == 0.0:
+        #     input_rp = 1.5  # default
+        # input_interval = float(self.textEditCaiyang.value())  # 采样间隔
+        # if input_interval == 0.0:
+        #     input_interval = 0.001  # default
+        # input_rotationAngle = float(self.textEditXuanzhuan.value())  # 样板的旋转角度ε
+        # if input_rotationAngle == 0.0:
+        #     input_rotationAngle = 28.0  # default
+        # print(input_rotationAngle)
+        # self.actual_X_list, self.actual_Y_list = Functions.culculate_curve(self.data_dict['rc'], input_rp,
+        #                                                                    self.data_dict['C'],
+        #                                                                    self.data_dict['rb'], input_rotationAngle,
+        #                                                                    input_interval)
+        # # 导出模拟数据
+        # result = ''
+        # for x, y in zip(self.actual_X_list, self.actual_Y_list):
+        #     result = result + '{},{}\n'.format(x, y)
+        # IO.save_result_to_txt(result)
+        # 新需求：直接导入点坐标
         Draw.one_line(self.actual_X_list, self.actual_Y_list, title='Actual Image',
                       save_path=r'./检测结果/实际图像.jpg')  # 绘制图片
         self.show_pic(save_path=r'./检测结果/实际图像.jpg')  # 加载图片
@@ -410,7 +431,7 @@ class Ui_MainWindow(object):
         print('V点和B点距离 {}'.format(distance))
         self.textEditJuli.setValue(distance)
         # 压力角误差
-        yalijiao = distance * 1000 / (X_B - X_V)
+        yalijiao = distance / (X_B - X_V)
         print('压力角误差 {}'.format(yalijiao))
         self.textEditYalijiao.setValue(yalijiao)
         print("<<<<<<<<<<<<<<<<<<<< evaluation <<<<<<<<<<<<<<<<<<<<<<<<<")
