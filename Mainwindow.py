@@ -419,8 +419,8 @@ class Ui_MainWindow(object):
         for i in range(len(self.DCE_X_list)):
             self.DCE_Y_list.append(self.actual_Y_list[i] - self.theoretical_Y_list[i])
         Draw.one_line(self.DCE_X_list, self.DCE_Y_list, title='DCE Image',
-                      save_path=r'./检测结果/平定偏差图像.jpg')  # 绘制图片
-        self.show_pic(save_path=r'./检测结果/平定偏差图像.jpg')  # 加载图片
+                      save_path=r'./检测结果/评定偏差图像.jpg')  # 绘制图片
+        self.show_pic(save_path=r'./检测结果/评定偏差图像.jpg')  # 加载图片
         print("<<<<<<<<<<<<<<<<<<<< DCE <<<<<<<<<<<<<<<<<<<<<<<<<")
 
     def evaluation(self):
@@ -490,7 +490,11 @@ class Ui_MainWindow(object):
         self.textEditJuli.clear()
         self.textEditYalijiao.clear()
         self.textEditCeliangshuju.clear()
-        self.scene.clear()
+        self.textEditBzengyi.clear()
+        self.textEditBzhihou.clear()
+        self.textEditGuzhihou.clear()
+        self.textEditGuzengyi.clear()
+        self.scene.clear()  # 清除图像
         self.graphicsView.setScene(self.scene)
         print("<<<<<<<<<<<<<<<<<<<< clear <<<<<<<<<<<<<<<<<<<<<<<<<")
 
