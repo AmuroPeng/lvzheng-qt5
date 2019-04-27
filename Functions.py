@@ -6,6 +6,7 @@ import pylab as pl
 import matplotlib.pyplot as plt
 import scipy.signal as signal
 
+
 # 老需求：导入参数计算
 def culculate_curve(std_rc, input_rp, std_c, std_rb, input_rotationAngle, input_interval):
     print(">>>>>>>>> Function >>> culculate_curve >>>>>>>>>>")
@@ -25,6 +26,7 @@ def culculate_curve(std_rc, input_rp, std_c, std_rb, input_rotationAngle, input_
     return X_list, Y_list
     print("<<<<<<<<<< Function <<< culculate_curve <<<<<<<<<")
 
+
 # 新需求：直接导入点坐标
 def culculate_curve_via_X(std_rc, input_rp, std_c, std_rb, input_rotationAngle, X_list):
     print(">>>>>>>>> Function >>> culculate_curve >>>>>>>>>>")
@@ -36,16 +38,21 @@ def culculate_curve_via_X(std_rc, input_rp, std_c, std_rb, input_rotationAngle, 
     return X_list, Y_list
     print("<<<<<<<<<< Function <<< culculate_curve <<<<<<<<<")
 
+
 def culculate_V_B(X_list, Y_list):
     print(">>>>>>>>> Function >>> culculate_curve >>>>>>>>>>")
     x = np.array(Y_list, dtype=float)  # , dtype = int
     Y_B = x[signal.argrelextrema(x, np.greater)][1]  # 极大值（纵坐标）
     X_B_temp = (signal.argrelextrema(x, np.greater))[0][1]  # 极大值所对的横坐标的索引
     X_B = X_list[X_B_temp]  # 对应的横坐标
+    x = np.array(Y_list, dtype=float)  # , dtype = int
+    Y_A = x[signal.argrelextrema(x, np.greater)][0]  # 极大值（纵坐标）
+    X_A_temp = (signal.argrelextrema(x, np.greater))[0][0]  # 极大值所对的横坐标的索引
+    X_A = X_list[X_A_temp]  # 对应的横坐标
     Y_V = (x[signal.argrelextrema(x, np.less)])[0]  # 极小值（纵坐标）
     X_V_temp = (signal.argrelextrema(x, np.less))[0][0]  # 极小值所对的横坐标的索引
     X_V = X_list[X_V_temp]  # 对应的横坐标
-    return Y_B, X_B, Y_V, X_V
+    return Y_B, X_B, Y_V, X_V, Y_A, X_A
     # for x,y in zip(X_list,Y_list):
     #     if y>Y_V:
     print("<<<<<<<<<< Function <<< culculate_curve <<<<<<<<<")

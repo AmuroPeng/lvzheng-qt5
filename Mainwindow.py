@@ -343,10 +343,8 @@ class Ui_MainWindow(object):
                 # print(i)
                 self.theoretical_Y_list.append(Functions.func1(std_rc, input_rp, std_c, std_rb, i))
                 # print(self.theoretical_Y_list)
-        # print(self.theoretical_X_list)
-        print(len(self.theoretical_X_list))
-        # print(self.theoretical_Y_list)
-        print(len(self.theoretical_Y_list))
+        print(self.theoretical_X_list)
+        print(self.theoretical_Y_list)
         Draw.one_line(self.theoretical_X_list, self.theoretical_Y_list, title='Theoretical Image',
                       save_path=r'./检测结果/理论图像.jpg')  # 绘制图片
         self.show_pic(save_path=r'./检测结果/理论图像.jpg')  # 加载图片
@@ -369,9 +367,11 @@ class Ui_MainWindow(object):
         with open('data.txt', 'r') as f:
             for line in f.readlines():
                 line = str(line.strip())  # 把末尾的'\n'删掉
+                line = str(line.strip('('))
+                line = str(line.strip(')'))
                 print(line)
-                self.actual_X_list.append(float(line.split(',')[0]))
-                self.actual_Y_list.append(float(line.split(',')[1]))
+                self.actual_X_list.append(float(line.split(', ')[0]))
+                self.actual_Y_list.append(float(line.split(', ')[1]))
             print(str('###导入data.txt数据###\t' + str(self.actual_X_list)))
             print(str('###导入data.txt数据###\t' + str(self.actual_Y_list)))
         print("<<<<<<<<<<<<<<<<<<<< load_data <<<<<<<<<<<<<<<<<<<<<<<<<")
@@ -427,7 +427,7 @@ class Ui_MainWindow(object):
         print(">>>>>>>>>>>>>>>>>>>> evaluation >>>>>>>>>>>>>>>>>>>>>>>>>")
         # V：理论驼峰曲线谷底的点
         # B：理论驼峰曲线第二个峰值点
-        Y_B, X_B, Y_V, X_V = Functions.culculate_V_B(self.theoretical_X_list, self.theoretical_Y_list)
+        Y_B, X_B, Y_V, X_V, Y_A, X_A = Functions.culculate_V_B(self.theoretical_X_list, self.theoretical_Y_list)
         print("谷底的点({},{}),第二个峰值点({},{})".format(X_V, Y_V, X_B, Y_B))
         # 最大误差值
         fk_X_list, fk_Y_list = Functions.culculate_fafk(self.DCE_X_list, self.DCE_Y_list)
@@ -445,15 +445,24 @@ class Ui_MainWindow(object):
         print("曲线拟合标准差 {}".format(deviation))
         self.textEditBiaozhuncha.setValue(deviation)
         # V点和B点距离
+        A_index = self.DCE_X_list.index(X_A)  # 带index的是list中的第几个数，不带index的是横坐标具体的值
         V_index = self.DCE_X_list.index(X_V)
         B_index = self.DCE_X_list.index(X_B)
         distance = abs(self.DCE_Y_list[V_index] - self.DCE_Y_list[B_index]) * 1000
-        print('V点和B点距离 {}'.format(distance))
+        print('V点和B点在DCE上的距离 {}'.format(distance))
         self.textEditJuli.setValue(distance)
         # 压力角误差
         yalijiao = distance / (X_B - X_V)
         print('压力角误差 {}'.format(yalijiao))
         self.textEditYalijiao.setValue(yalijiao)
+        # B点增益误差
+        self.textEditBzengyi.setValue(self.DCE_Y_list[B_index] / self.theoretical_Y_list[B_index])
+        # 谷底(V点)增益误差
+        self.textEditGuzengyi.setValue(self.DCE_Y_list[V_index] / self.theoretical_Y_list[V_index])
+        # B点滞后误差 (持平的数量/28)
+        self.textEditBzhihou.setValue((self.actual_Y_list[V_index:].count(self.actual_Y_list[B_index])) / 28)
+        # 谷底(V点)滞后误差 (持平的数量/28)
+        self.textEditGuzhihou.setValue((self.actual_Y_list[A_index:B_index].count(self.actual_Y_list[V_index])) / 28)
         print("<<<<<<<<<<<<<<<<<<<< evaluation <<<<<<<<<<<<<<<<<<<<<<<<<")
 
     def save(self):
