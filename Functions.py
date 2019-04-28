@@ -71,12 +71,12 @@ def func1(std_rc, input_rp, std_c, std_rb, input_rotationAngle):
     return result
 
 
-def culculate_fafk(DCE_X_list, DCE_Y_list):  # 计算最大误差值
-    X_FK = 28.0  # default FK：0°~28°
+def culculate_fafk(DCE_X_list, DCE_Y_list, FK_start=11.93, FK_end=20.3344):  # 计算最大误差值
+    # default FK：11.93°~20.3344°
     fk_X_list = []
     fk_Y_list = []
     for x, y in zip(DCE_X_list, DCE_Y_list):
-        if x >= 0.0 and x <= X_FK:
+        if x >= FK_start and x <= FK_end:
             fk_X_list.append(x)
             fk_Y_list.append(y)
     return fk_X_list, fk_Y_list

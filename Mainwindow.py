@@ -430,7 +430,10 @@ class Ui_MainWindow(object):
         Y_B, X_B, Y_V, X_V, Y_A, X_A = Functions.culculate_V_B(self.theoretical_X_list, self.theoretical_Y_list)
         print("谷底的点({},{}),第二个峰值点({},{})".format(X_V, Y_V, X_B, Y_B))
         # 最大误差值
-        fk_X_list, fk_Y_list = Functions.culculate_fafk(self.DCE_X_list, self.DCE_Y_list)
+        FK_start = 11.93
+        FK_end = 20.3344
+        fk_X_list, fk_Y_list = Functions.culculate_fafk(self.DCE_X_list, self.DCE_Y_list, FK_start=FK_start,
+                                                        FK_end=FK_end)
         min_y = min(fk_Y_list)
         min_x = fk_X_list[fk_Y_list.index(min_y)]
         max_y = max(fk_Y_list)
@@ -459,10 +462,12 @@ class Ui_MainWindow(object):
         self.textEditBzengyi.setValue(self.DCE_Y_list[B_index] / self.theoretical_Y_list[B_index])
         # 谷底(V点)增益误差
         self.textEditGuzengyi.setValue(self.DCE_Y_list[V_index] / self.theoretical_Y_list[V_index])
-        # B点滞后误差 (持平的数量/28)
-        self.textEditBzhihou.setValue((self.actual_Y_list[V_index:].count(self.actual_Y_list[B_index])) / 28)
-        # 谷底(V点)滞后误差 (持平的数量/28)
-        self.textEditGuzhihou.setValue((self.actual_Y_list[A_index:B_index].count(self.actual_Y_list[V_index])) / 28)
+        # B点滞后误差 (持平的数量/FK)
+        self.textEditBzhihou.setValue(
+            (self.actual_Y_list[V_index:].count(self.actual_Y_list[B_index])) / (FK_end - FK_start))
+        # 谷底(V点)滞后误差 (持平的数量/FK)
+        self.textEditGuzhihou.setValue(
+            (self.actual_Y_list[A_index:B_index].count(self.actual_Y_list[V_index])) / (FK_end - FK_start))
         print("<<<<<<<<<<<<<<<<<<<< evaluation <<<<<<<<<<<<<<<<<<<<<<<<<")
 
     def save(self):
