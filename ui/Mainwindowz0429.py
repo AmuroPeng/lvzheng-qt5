@@ -1,33 +1,12 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'Mainwindow.ui'
+# Form implementation generated from reading ui file 'Mainwindowz0429.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-###############################################################
-from PyQt5.QtGui import QImage, QPixmap
-import Functions
-import Draw
-import math
-import json
-import IO
-import cv2
-import pyqtgraph as pg
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QMainWindow, QApplication, QGraphicsScene, QGraphicsPixmapItem
-from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtCore import QCoreApplication
-import cv2
-import numpy as np
-
-
-###############################################################
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -248,34 +227,13 @@ class Ui_MainWindow(object):
         self.ButtonClose = QtWidgets.QPushButton(self.layoutWidget)
         self.ButtonClose.setObjectName("ButtonClose")
         self.verticalLayout_2.addWidget(self.ButtonClose)
-        # MainWindow.setCentralWidget(self.centralwidget)
+        MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
-        # MainWindow.setStatusBar(self.statusbar)
+        MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
-        #################################################################
-        # 初始化
-        self.actual_X_list = []
-        self.actual_Y_list = []
-        self.theoretical_X_list = []
-        self.theoretical_Y_list = []
-        self.DCE_X_list = []
-        self.DCE_Y_list = []
-        # 动作
-        self.ButtonLilun.clicked.connect(lambda: self.theoretical_curve())
-        self.ButtonDaoru.clicked.connect(lambda: self.load_data())
-        self.ButtonShiji.clicked.connect(lambda: self.actual_curve())
-        self.ButtonPiancha.clicked.connect(lambda: self.DCE())
-        self.ButtonPinding.clicked.connect(lambda: self.evaluation())
-        self.ButtonQingchu.clicked.connect(lambda: self.clear())
-        self.ButtonSave.clicked.connect(lambda: self.save())
-        self.ButtonClose.clicked.connect(lambda: QCoreApplication.quit())
-        self.ButtonDuibi.clicked.connect(lambda: self.curve_comparison())
-
-        #################################################################
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -304,233 +262,3 @@ class Ui_MainWindow(object):
         self.ButtonQingchu.setText(_translate("MainWindow", "清除"))
         self.ButtonClose.setText(_translate("MainWindow", "关闭"))
 
-    #################################################################
-
-    def theoretical_curve(self):
-        print(">>>>>>>>>>>>>>>>>>>> theoretical_curve >>>>>>>>>>>>>>>>>>>>>>>>>")
-        # 将所有数据都float化！！！
-        std_z = 40.0  # 这是啥来的忘了好像用不上
-        std_e = 28.5648595796  # 这是啥来的忘了好像用不上
-        std_rb = 400.0  # 样板模拟齿轮的基圆半径
-        std_rp = 1.5  # 齿轮测量仪器的测头半径(但是是用户导入的数据，所以暂时用不上)
-        std_m = 21.28355545  # 这是啥来的忘了好像用不上
-        std_c = 401.583156  # 定心轴和测量中心轴的距离
-        std_rc = 105.102  # 检测圆弧半径
-        # if (str(input_rp).split(".")[0]).isdigit() or str(input_rp).isdigit() or (str(input_rp).split('-')[-1]).split(".")[
-        #     -1].isdigit():
-        #     pass
-        # else:
-        #     QtWidgets.QMessageBox.about(QtWidgets.QMessageBox(), '错误', '请输入正确的测头半径')
-        #     return 0
-        input_rp = float(self.textEditCetou.value())  # 齿轮测量仪器的测头半径(用户输入)
-        if input_rp == 0.0:
-            input_rp = 1.5  # default
-        input_interval = float(self.textEditCaiyang.value())  # 采样间隔
-        if input_interval == 0.0:
-            input_interval = 0.001  # default
-        input_rotationAngle = float(self.textEditXuanzhuan.value())  # 样板的旋转角度ε
-        if input_rotationAngle == 0.0:
-            input_rotationAngle = 28.0  # default
-        self.theoretical_Y_list = []
-        if self.actual_X_list == []:
-            self.theoretical_X_list, self.theoretical_Y_list = Functions.culculate_curve(std_rc, input_rp, std_c,
-                                                                                         std_rb,
-                                                                                         input_rotationAngle,
-                                                                                         input_interval)
-        else:
-            self.theoretical_X_list = self.actual_X_list
-            for i in self.theoretical_X_list:
-                # print(i)
-                self.theoretical_Y_list.append(Functions.func1(std_rc, input_rp, std_c, std_rb, i))
-                # print(self.theoretical_Y_list)
-        print(self.theoretical_X_list)
-        print(self.theoretical_Y_list)
-        Draw.one_line(self.theoretical_X_list, self.theoretical_Y_list, title='Theoretical Image',
-                      save_path=r'./检测结果/理论图像.jpg')  # 绘制图片
-        self.show_pic(save_path=r'./检测结果/理论图像.jpg')  # 加载图片
-
-        print("<<<<<<<<<<<<<<<<<<<< theoretical_curve <<<<<<<<<<<<<<<<<<<<<<<<<")
-
-    def load_data(self):
-        print(">>>>>>>>>>>>>>>>>>>> load_data >>>>>>>>>>>>>>>>>>>>>>>>>")
-        # 老需求：导入参数计算
-        # self.data_dict = IO.load_data()
-        # data_str = ''
-        # for key, value in self.data_dict.items():
-        #     data_str = data_str + str(key) + ':' + str(value) + '\n'
-        # self.textEditCeliangshuju.setText(data_str)
-        # 新需求：直接导入点坐标
-        self.actual_X_list = []
-        self.actual_Y_list = []
-        with open('data.txt', 'r') as f:
-            self.textEditCeliangshuju.setText(f.read())
-        with open('data.txt', 'r') as f:
-            for line in f.readlines():
-                line = str(line.strip())  # 把末尾的'\n'删掉
-                line = str(line.strip('('))
-                line = str(line.strip(')'))
-                print(line)
-                self.actual_X_list.append(float(line.split(', ')[0]))
-                self.actual_Y_list.append(float(line.split(', ')[1]))
-            print(str('###导入data.txt数据###\t' + str(self.actual_X_list)))
-            print(str('###导入data.txt数据###\t' + str(self.actual_Y_list)))
-        print("<<<<<<<<<<<<<<<<<<<< load_data <<<<<<<<<<<<<<<<<<<<<<<<<")
-
-    def actual_curve(self):  # 实际曲线
-        print(">>>>>>>>>>>>>>>>>>>> actual_curve >>>>>>>>>>>>>>>>>>>>>>>>>")
-        # 老需求：导入参数计算
-        # input_rp = float(self.textEditCetou.value())  # 齿轮测量仪器的测头半径(用户输入)
-        # if input_rp == 0.0:
-        #     input_rp = 1.5  # default
-        # input_interval = float(self.textEditCaiyang.value())  # 采样间隔
-        # if input_interval == 0.0:
-        #     input_interval = 0.001  # default
-        # input_rotationAngle = float(self.textEditXuanzhuan.value())  # 样板的旋转角度ε
-        # if input_rotationAngle == 0.0:
-        #     input_rotationAngle = 28.0  # default
-        # print(input_rotationAngle)
-        # self.actual_X_list, self.actual_Y_list = Functions.culculate_curve(self.data_dict['rc'], input_rp,
-        #                                                                    self.data_dict['C'],
-        #                                                                    self.data_dict['rb'], input_rotationAngle,
-        #                                                                    input_interval)
-        # # 导出模拟数据
-        # result = ''
-        # for x, y in zip(self.actual_X_list, self.actual_Y_list):
-        #     result = result + '{},{}\n'.format(x, y)
-        # IO.save_result_to_txt(result)
-        # 新需求：直接导入点坐标
-        Draw.one_line(self.actual_X_list, self.actual_Y_list, title='Actual Image',
-                      save_path=r'./检测结果/实际图像.jpg')  # 绘制图片
-        self.show_pic(save_path=r'./检测结果/实际图像.jpg')  # 加载图片
-        print("<<<<<<<<<<<<<<<<<<<< actual_curve <<<<<<<<<<<<<<<<<<<<<<<<<")
-
-    def curve_comparison(self):  # 实际曲线
-        print(">>>>>>>>>>>>>>>>>>>> curve_comparison >>>>>>>>>>>>>>>>>>>>>>>>>")
-        Draw.two_lines(self.actual_X_list, self.theoretical_Y_list, self.actual_Y_list,
-                       title='Theoretical & Actual Image',
-                       save_path=r'./检测结果/对比图像.jpg')  # 绘制图片
-        self.show_pic(save_path=r'./检测结果/对比图像.jpg')  # 加载图片
-        print("<<<<<<<<<<<<<<<<<<<< curve_comparison <<<<<<<<<<<<<<<<<<<<<<<<<")
-
-    def DCE(self):  # 评定偏差曲线：DCE = 实际曲线 - 理论曲线
-        print(">>>>>>>>>>>>>>>>>>>> DCE >>>>>>>>>>>>>>>>>>>>>>>>>")
-        self.DCE_X_list = self.theoretical_X_list
-        self.DCE_Y_list = []
-        for i in range(len(self.DCE_X_list)):
-            self.DCE_Y_list.append(self.actual_Y_list[i] - self.theoretical_Y_list[i])
-        Draw.one_line(self.DCE_X_list, self.DCE_Y_list, title='DCE Image',
-                      save_path=r'./检测结果/评定偏差图像.jpg')  # 绘制图片
-        self.show_pic(save_path=r'./检测结果/评定偏差图像.jpg')  # 加载图片
-        print("<<<<<<<<<<<<<<<<<<<< DCE <<<<<<<<<<<<<<<<<<<<<<<<<")
-
-    def evaluation(self):
-        print(">>>>>>>>>>>>>>>>>>>> evaluation >>>>>>>>>>>>>>>>>>>>>>>>>")
-        # V：理论驼峰曲线谷底的点
-        # B：理论驼峰曲线第二个峰值点
-        Y_B, X_B, Y_V, X_V, Y_A, X_A = Functions.culculate_V_B(self.theoretical_X_list, self.theoretical_Y_list)
-        print("谷底的点({},{}),第二个峰值点({},{})".format(X_V, Y_V, X_B, Y_B))
-        # 最大误差值
-        FK_start = 11.93
-        FK_end = 20.3344
-        fk_X_list, fk_Y_list = Functions.culculate_fafk(self.DCE_X_list, self.DCE_Y_list, FK_start=FK_start,
-                                                        FK_end=FK_end)
-        min_y = min(fk_Y_list)
-        min_x = fk_X_list[fk_Y_list.index(min_y)]
-        max_y = max(fk_Y_list)
-        max_x = fk_X_list[fk_Y_list.index(max_y)]
-        print("Fafk范围内最小值({},{}),最大值({},{})".format(min_x, min_y, max_x, max_y))
-        self.textEditWucha.setValue((max_y - min_y) * 1000)  # 转换单位
-        # 曲线拟合标准差
-        deviation = 0.0
-        for i in fk_Y_list:
-            deviation = deviation + math.pow(i, 2)
-        deviation = math.sqrt(deviation) * 1000 / (len(fk_Y_list) - 1)
-        print("曲线拟合标准差 {}".format(deviation))
-        self.textEditBiaozhuncha.setValue(deviation)
-        # V点和B点距离
-        A_index = self.DCE_X_list.index(X_A)  # 带index的是list中的第几个数，不带index的是横坐标具体的值
-        V_index = self.DCE_X_list.index(X_V)
-        B_index = self.DCE_X_list.index(X_B)
-        distance = abs(self.DCE_Y_list[V_index] - self.DCE_Y_list[B_index]) * 1000
-        print('V点和B点在DCE上的距离 {}'.format(distance))
-        self.textEditJuli.setValue(distance)
-        # 压力角误差
-        yalijiao = distance / (X_B - X_V)
-        print('压力角误差 {}'.format(yalijiao))
-        self.textEditYalijiao.setValue(yalijiao)
-        # B点增益误差
-        self.textEditBzengyi.setValue(self.DCE_Y_list[B_index] / self.theoretical_Y_list[B_index])
-        # 谷底(V点)增益误差
-        self.textEditGuzengyi.setValue(self.DCE_Y_list[V_index] / self.theoretical_Y_list[V_index])
-        # B点滞后误差 (持平的数量/FK)
-        self.textEditBzhihou.setValue(
-            (self.actual_Y_list[V_index:].count(self.actual_Y_list[B_index])) / (FK_end - FK_start))
-        # 谷底(V点)滞后误差 (持平的数量/FK)
-        self.textEditGuzhihou.setValue(
-            (self.actual_Y_list[A_index:B_index].count(self.actual_Y_list[V_index])) / (FK_end - FK_start))
-        print("<<<<<<<<<<<<<<<<<<<< evaluation <<<<<<<<<<<<<<<<<<<<<<<<<")
-
-    def save(self):
-        print(">>>>>>>>>>>>>>>>>>>> save >>>>>>>>>>>>>>>>>>>>>>>>>")
-        save_data = {
-            '测头半径(mm)：': self.textEditCetou.value(),
-            '采样间隔(deg)：': self.textEditCaiyang.value(),
-            '样板旋转角度(deg)：': self.textEditXuanzhuan.value(),
-            '最大误差值(um)：': self.textEditWucha.value(),
-            '曲线拟合标准差(um)：': self.textEditBiaozhuncha.value(),
-            'V点和B点距离(um)：': self.textEditJuli.value(),
-            '压力角误差(um/deg)：': self.textEditYalijiao.value()
-        }
-        print('保存数据 {}'.format(save_data))
-        IO.save_result_to_txt(save_data)
-        print("<<<<<<<<<<<<<<<<<<<< save <<<<<<<<<<<<<<<<<<<<<<<<<")
-
-    def clear(self):  # 清除所有数据和曲线
-        print(">>>>>>>>>>>>>>>>>>>> clear >>>>>>>>>>>>>>>>>>>>>>>>>")
-        self.textEditCetou.clear()
-        self.textEditCaiyang.clear()
-        self.textEditXuanzhuan.clear()
-        self.textEditWucha.clear()
-        self.textEditBiaozhuncha.clear()
-        self.textEditJuli.clear()
-        self.textEditYalijiao.clear()
-        self.textEditCeliangshuju.clear()
-        self.textEditBzengyi.clear()
-        self.textEditBzhihou.clear()
-        self.textEditGuzhihou.clear()
-        self.textEditGuzengyi.clear()
-        self.scene.clear()  # 清除图像
-        self.graphicsView.setScene(self.scene)
-        print("<<<<<<<<<<<<<<<<<<<< clear <<<<<<<<<<<<<<<<<<<<<<<<<")
-
-    def show_pic(self, save_path='line.jpg'):
-        print(">>>>>>>>>>>>>>>>>>>> show_pic >>>>>>>>>>>>>>>>>>>>>>>>>")
-        # print(save_path)
-        img = cv2.imdecode(np.fromfile(save_path, dtype=np.uint8), -1)  # 读取图像
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # 转换图像通道
-        x = img.shape[1]  # 获取图像大小
-        y = img.shape[0]
-        # self.zoomscale = 1  # 图片放缩尺度
-        frame = QImage(img, x, y, QImage.Format_RGB888)
-        pix = QPixmap.fromImage(frame)
-        self.item = QGraphicsPixmapItem(pix)  # 创建像素图元
-        # self.item.setScale(self.zoomscale)
-        self.scene = QGraphicsScene()  # 创建场景
-        self.scene.addItem(self.item)
-        self.graphicsView.setScene(self.scene)  # 将场景添加至视图
-        print("<<<<<<<<<<<<<<<<<<<< show_pic <<<<<<<<<<<<<<<<<<<<<<<<<")
-
-
-#################################################################
-
-
-if __name__ == "__main__":
-    import sys
-
-    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
-    app = QtWidgets.QApplication(sys.argv)
-    widget = QtWidgets.QWidget()
-    ui = Ui_MainWindow()
-    ui.setupUi(widget)
-    widget.show()
-    sys.exit(app.exec_())
