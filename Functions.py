@@ -82,6 +82,12 @@ def culculate_fafk(DCE_X_list, DCE_Y_list, FK_start=11.93, FK_end=20.3344):  # �
     return fk_X_list, fk_Y_list
 
 
+def culculate_yali(num):
+    k = 7.039
+    b = -0.684
+    return k * num + b
+
+
 if __name__ == "__main__":
     std_z = 40.0  # 这是啥来的忘了好像用不上
     std_e = 28.5648595796  # 这是啥来的忘了好像用不上

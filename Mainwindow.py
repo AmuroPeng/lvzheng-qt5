@@ -32,11 +32,11 @@ import numpy as np
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1195, 738)
+        MainWindow.resize(1238, 738)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.graphicsView = QtWidgets.QGraphicsView(self.centralwidget)
-        self.graphicsView.setGeometry(QtCore.QRect(220, 110, 671, 511))
+        self.graphicsView.setGeometry(QtCore.QRect(220, 110, 711, 511))
         self.graphicsView.setObjectName("graphicsView")
         self.groupBox = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBox.setGeometry(QtCore.QRect(10, 60, 206, 131))
@@ -83,7 +83,7 @@ class Ui_MainWindow(object):
         self.textEditCeliangshuju.setGeometry(QtCore.QRect(10, 20, 161, 121))
         self.textEditCeliangshuju.setObjectName("textEditCeliangshuju")
         self.groupBox_3 = QtWidgets.QGroupBox(self.centralwidget)
-        self.groupBox_3.setGeometry(QtCore.QRect(900, 140, 271, 441))
+        self.groupBox_3.setGeometry(QtCore.QRect(940, 140, 271, 441))
         self.groupBox_3.setObjectName("groupBox_3")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.groupBox_3)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
@@ -455,7 +455,7 @@ class Ui_MainWindow(object):
         print('V点和B点在DCE上的距离 {}'.format(distance))
         self.textEditJuli.setValue(distance)
         # 压力角误差
-        yalijiao = distance / (X_B - X_V)
+        yalijiao = distance / Functions.culculate_yali(X_B - X_V)
         print('压力角误差 {}'.format(yalijiao))
         self.textEditYalijiao.setValue(yalijiao)
         # B点增益误差
